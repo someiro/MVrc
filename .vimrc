@@ -178,3 +178,36 @@ def OpenBrowser(url: string)
     echoerr '未対応のOSです'
   endif
 enddef
+
+# ==============================
+# ChatGPT Command Mode (:Chat)
+# ==============================
+
+command -nargs=+ Chat CallChatCommand(<q-args>)
+
+def CallChatCommand(prompt: string)
+  if empty(trim(prompt))
+    echoerr 'Prompt is empty'
+    return
+  endif
+
+  if !executable('python3')
+    echoerr 'python3 が見つかりません'
+    return
+  endif
+
+  var encoded = system(
+        'python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.stdin.read()))"',
+        prompt
+      )
+
+  if v:shell_error != 0
+    echoerr 'URLエンコードに失敗しました'
+    return
+  endif
+
+  var url = 'https://chat.openai.com/?q=' .. trim(encoded)
+  OpenBrowser(url)
+
+  echo 'ChatGPTをプロンプト付きで開きました 🚀'
+enddef

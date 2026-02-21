@@ -1,9 +1,18 @@
-# Vim9 Vibe Coding vimrc 🚀
+<h1 align="center">🖤 MVrc</h1>
+<p align="center">Modern Vim Configuration</p><br>
 
-This is pure Vibe Coding.
+<video controls src="docs/demo.mp4" title="MVrc Demo"></video>
+
+This configuration was created through experimentation and intuition — pure Vibe Coding.
 
 A Vim9 Script vimrc written by someone who just vibes with Vim – no formal Vim scripting experience required.  
 The main goal: make Vim feel good and fun to use, with ChatGPT integration for code exploration.
+
+---
+
+## 🇯🇵 日本語版
+
+For Japanese readers, see the [Japanese README](docs/README_ja.md) 🇯🇵
 
 ---
 
@@ -40,18 +49,30 @@ Enter     → confirm completion or newline
 
 ### 🔹 ChatGPT Integration
 
-Select code in visual mode
+#### Visual Mode (Code Review)
 
-Press `<leader>g`
-
-Your browser opens ChatGPT
+1. Select code in visual mode
+2. Press `<leader>g`
+3. Your browser opens ChatGPT
 
 The following prompt is automatically included:
 
-Please review the following code:
-1. Explain what this code does
-2. Suggest improvements
-3. Highlight bugs or potential risks
+- Explain what this code does
+- Suggest improvements
+- Highlight bugs or potential risks
+
+#### Command Mode (Free Prompt)
+
+You can also send any question directly using a Vim command.
+
+Example:
+
+```
+:Chat Explain closures in simple terms
+```
+
+This opens ChatGPT in your browser with the prompt already filled in.
+
 
 ### 🛠 Requirements
 
