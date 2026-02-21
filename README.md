@@ -1,7 +1,9 @@
-<h1 align="center">🖤 MVrc</h1>
-<p align="center">Modern Vim Configuration</p><br>
+<div align="center">
+<h1>🖤 MVrc</h1>
+<p>Modern Vim Configuration</p><br>
+<video controls src="https://github.com/someiro/MVrc/raw/refs/heads/main/docs/demo.mp4" title="MVrc Demo" width="320" height="240"></video>
+</div>
 
-<video controls src="https://github.com/someiro/MVrc/raw/refs/heads/main/docs/demo.mp4" title="MVrc Demo"></video>
 
 This configuration was created through experimentation and intuition — pure Vibe Coding.
 
