@@ -85,7 +85,7 @@ highlight LineNr        guifg=#4b5563 guibg=#0f1115
 highlight CursorLine    guibg=#0b1220
 highlight CursorLineNr  guifg=#93c5fd guibg=#0b1220
 
-#highlight Comment       guifg=#6b7280 gui=italic
+highlight Comment       guifg=#6b7280 gui=italic
 
 highlight Keyword       guifg=#60a5fa
 highlight Statement     guifg=#60a5fa
