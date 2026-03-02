@@ -1,20 +1,6 @@
 vim9script
 
 # ==================================================
-# 目次（ジャンル）
-# ==================================================
-# 1. 基本設定
-# 2. 検索・編集系
-# 3. 補完
-# 4. テーマ（色定義）
-# 5. Statusline 構成
-# 6. Statusline 色制御（Git / Mode）
-# 7. Git ブランチ取得
-# 8. ChatGPT 連携
-# 9. UI（titleなど）
-# 10. autocmd 群
-
-# ==================================================
 # 基本設定
 # ==================================================
 
@@ -32,7 +18,6 @@ syntax on
 set termguicolors
 set background=dark
 
-
 # ==================================================
 # 検索
 # ==================================================
@@ -42,14 +27,12 @@ set smartcase
 set incsearch
 set hlsearch
 
-
 # ==================================================
 # 補完
 # ==================================================
 
 set completeopt=menuone,noselect
 set pumheight=10
-
 
 # ==================================================
 # Smart Tab
@@ -71,9 +54,8 @@ inoremap <expr> <Tab>   SmartTab()
 inoremap <expr> <S-Tab> SmartSTab()
 inoremap <expr> <CR>    pumvisible() ? "\<C-y>" : "\<CR>"
 
-
 # ==================================================
-# MVrc Theme
+# Theme
 # ==================================================
 
 highlight clear
@@ -112,40 +94,30 @@ highlight PmenuThumb    guibg=#4b5563
 
 
 # ==================================================
-# Statusline: 基本構造
+# Statusline
 # ==================================================
 
 set laststatus=2
 set statusline=%#StatusLineGit#%{GitBranch()}%#StatusLine#%=%l:%c
 
+highlight StatusLine        guifg=#e5e7eb guibg=#111827
+highlight StatusLineNC      guifg=#6b7280 guibg=#0f1115
+highlight StatusLineGit     guifg=#34d399 guibg=#111827 gui=bold
 
-# ==================================================
-# Statusline: 色定義
-# ==================================================
+highlight StatusLineNormal  guifg=#e5e7eb guibg=#111827 gui=bold
+highlight StatusLineInsert  guifg=#0f1115 guibg=#60a5fa gui=bold
+highlight StatusLineVisual  guifg=#0f1115 guibg=#a78bfa gui=bold
 
-highlight StatusLine      guifg=#e5e7eb guibg=#111827
-highlight StatusLineNC    guifg=#6b7280 guibg=#0f1115
-highlight StatusLineGit   guifg=#34d399 guibg=#111827 gui=bold
+def UpdateStatusline()
+  var m = mode()
 
-highlight StatusLineNormal guifg=#e5e7eb guibg=#111827 gui=bold
-highlight StatusLineInsert guifg=#0f1115 guibg=#60a5fa gui=bold
-highlight StatusLineVisual guifg=#0f1115 guibg=#a78bfa gui=bold
-
-
-# ==================================================
-# Statusline: モード切替
-# ==================================================
-
-def StatuslineNormal()
-  highlight! link StatusLine StatusLineNormal
-enddef
-
-def StatuslineInsert()
-  highlight! link StatusLine StatusLineInsert
-enddef
-
-def StatuslineVisual()
-  highlight! link StatusLine StatusLineVisual
+  if m =~# '^[iR]'
+    highlight! link StatusLine StatusLineInsert
+  elseif m =~# '^[vV\x16]'
+    highlight! link StatusLine StatusLineVisual
+  else
+    highlight! link StatusLine StatusLineNormal
+  endif
 enddef
 
 
@@ -161,20 +133,19 @@ def UpdateGitBranch()
     return
   endif
 
-  var inside = system('git rev-parse --is-inside-work-tree 2>/dev/null')
-  if v:shell_error != 0 || trim(inside) !=# 'true'
+  var inside = trim(system('git rev-parse --is-inside-work-tree 2>/dev/null'))
+  if v:shell_error != 0 || inside !=# 'true'
     git_branch = ''
     return
   endif
 
-  var branch = system('git rev-parse --abbrev-ref HEAD 2>/dev/null')
-  if v:shell_error != 0
+  var branch = trim(system('git rev-parse --abbrev-ref HEAD 2>/dev/null'))
+  if v:shell_error != 0 || branch ==# ''
     git_branch = ''
     return
   endif
 
-  branch = trim(branch)
-  git_branch = branch ==# '' ? '' : '[' .. branch .. ']'
+  git_branch = '[' .. branch .. ']'
 enddef
 
 def g:GitBranch(): string
@@ -209,6 +180,11 @@ def OpenBrowser(url: string)
 enddef
 
 def EncodeAndOpen(text: string)
+  if !executable('python3')
+    echoerr 'ChatGPT feature requires python3'
+    return
+  endif
+
   var encoded = system(
     'python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.stdin.read()))"',
     text
@@ -229,7 +205,6 @@ def CallChatCommand(prompt: string)
   EncodeAndOpen(prompt)
 enddef
 
-
 # ==================================================
 # UI
 # ==================================================
@@ -245,10 +220,72 @@ set titlestring=%f
 augroup MVrc
   autocmd!
   autocmd BufEnter,DirChanged * UpdateGitBranch()
-  autocmd InsertEnter * StatuslineInsert()
-  autocmd InsertLeave * StatuslineNormal()
-  autocmd ModeChanged *:[vV\x16]* StatuslineVisual()
-  autocmd ModeChanged [vV\x16]*:* StatuslineNormal()
+  autocmd BufWritePost * UpdateGitBranch()
+  autocmd InsertEnter,InsertLeave,ModeChanged * UpdateStatusline()
 augroup END
 
-StatuslineNormal()
+UpdateStatusline()
+
+
+# ==================================================
+# Auto Save on Normal Mode
+# ==================================================
+
+def AutoSave()
+  if &modifiable && bufname('%') !=# '' && &buftype ==# ''
+    silent write
+    echo 'Saved ✨'
+  endif
+enddef
+
+#autocmd InsertLeave * AutoSave()
+#autocmd ModeChanged [vV\x16]*:* AutoSave()
+
+
+def g:OpenBottomTerminal()
+  botright split
+  resize 12
+  terminal ++curwin
+  echo 'Terminal ready 🚀'
+enddef
+
+nnoremap <leader>t :call OpenBottomTerminal()<CR>
+
+
+# ==================================================
+# Horizontal Split (Right only)
+# ==================================================
+
+def SplitRight()
+  wincmd v
+  wincmd l
+enddef
+
+command! SplitRight call SplitRight()
+nnoremap <leader><Right> <Cmd>SplitRight<CR>
+
+def g:SaveAndClose()
+  if winnr('$') == 1
+    echo 'Nothing to close 🙂'
+    return
+  endif
+
+  if &modified
+    write
+  endif
+
+  close
+  echo 'Closed ✨'
+enddef
+
+nnoremap <leader>x <Cmd>call g:SaveAndClose()<CR>
+
+
+# ==================================================
+# Undo / Redo
+# ==================================================
+
+nnoremap <leader>u u
+nnoremap <leader>r <C-r>
+
+
