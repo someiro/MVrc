@@ -1,9 +1,8 @@
 <div align="center">
-  <h1>MVrc 🖤</h1>
+  <img controls src="docs/MVrc.png" title="MVrc" />
   <p>
     <b>Minimal & Approachable Vim9 Configuration</b>
   </p>
-  <img controls src="docs/MVrc.png" title="MVrc" />
 </div>
 
 <br>
