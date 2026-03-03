@@ -3,7 +3,7 @@
   <p>
     <b>Minimal & Approachable Vim9 Configuration</b>
   </p>
-  <img controls src="docs/demo.gif" title="MVrc Demo" />
+  <img controls src="docs/MVrc.png" title="MVrc" />
 </div>
 
 <br>
