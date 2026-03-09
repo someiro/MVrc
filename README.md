@@ -1,5 +1,5 @@
 <div align="center">
-  <img controls src="docs/MVrc.png" title="MVrc" />
+  <img controls src="docs/MVrc.svg" title="MVrc" />
   <p>
     <b>Minimal & Approachable Vim9 Configuration</b>
   </p>
